@@ -145,8 +145,8 @@ const handleGoogleSignin = ()=> {
   
 
 <TextInput  secureTextEntry={hidePassword} onChangeText={(val) =>setPassword(val)} style={styles.input} placeholder="Password"></TextInput>
-<Ionicons name={hidePassword ? 'md-eye-off' : 'md-eye'} size ={100} 
-       onPress={()=> setHidePassword(!hidePassword)} />
+
+
  </View>
  
   
