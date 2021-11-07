@@ -3,12 +3,17 @@ import React from "react";
 import * as Google from 'expo-google-app-auth' ;
 import FlashMessage from "react-native-flash-message";
 import { showMessage } from "react-native-flash-message";
+/*
+import * as WebBrowser from 'expo-web-browser';
+import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
+*/
+import * as AuthSession from 'expo-auth-session';
+import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
 
-import { Ionicons } from "react-icons/fa";
 const SignIn = ({navigation}) => {
     const [email,setEmail] = React.useState('');
     const [password,setPassword] = React.useState('');
-    const [googleAuth,setGoogleAuth]=React.useState(false);
+    const [auth,setAuth]=React.useState(false);
     const [hidePassword,setHidePassword] = React.useState(true);
 
     const baseUrl = Platform.OS === 'android' ? 'http://10.0.2.2' : 'http://localhost';
@@ -23,28 +28,27 @@ const SignIn = ({navigation}) => {
         body: JSON.stringify({
             email:email,          
             password: password,
-            googleAuth : googleAuth
+            googleAuth : auth
         })
        
     })
     .catch(err => {       
         console.log(err.message);
       })
-      
-    .then((res)=>res.json())
-    .then((res)=>console.log(res))
-    .then((res)=>validSigning(res));
+      .then((res)=>res.json())
+      .then((res)=> validSigning(res));
+    
 }
 const validSigning = (res)=>{
-    //if(res.status  == true){
+    if(res.status  == true){
     navigation.navigate("Accounts");
-/*}else{
+  }else{
     showMessage({
         message: res.msg,
         type: "Fail",
       });
     
-}*/
+}
 }
 const handleSignup = ()=> {
     fetch(baseUrl + ":3333/signup", {
@@ -57,20 +61,21 @@ const handleSignup = ()=> {
         body: JSON.stringify({
             email:email,          
             password: password,
-            googleAuth : false
+            googleAuth : auth
         })
        
     })
     .catch(err => {       
         console.log(err.message);
       })
-      
+
     .then((res)=>res.json())
-    .then((res)=>console.log(res))
-    .then((res)=>validSigning(res));
+    
+    .then((res)=> validSigning(res));
+  //  .then((res)=> navigation.navigate("Accounts"));
 }
 const handleGoogleSignin = ()=> {
-    setGoogleAuth(true);
+    setAuth(true);
     const config = {iosClientId:`931058584633-aehatkf77qgct4kf7oft95sa6tal2jhh.apps.googleusercontent.com`,
             androidClientId:`931058584633-124i06spp5g2a1qk6ujjovc0chmcrt2r.apps.googleusercontent.com`,
             scope:['profile', 'email']
@@ -98,7 +103,7 @@ const handleGoogleSignin = ()=> {
           });
         
        }
-       setGoogleAuth(false);
+       setAuth(false);
    })
    .catch((error)=>{
        console.log(error);
@@ -106,8 +111,36 @@ const handleGoogleSignin = ()=> {
         message: "An error occurred . check your network and try again",
         type: "Error",
       });
-      setGoogleAuth(false);
+      setAuth(false);
     })
+}
+
+const handleGithubSignin = () =>{
+    //84dbb61a46e97c78511e2ff66d862e2bebaeb04a client secret 
+    //client id be16b7083f196c91ce08
+   // setAuth(true);
+     /*
+const discovery = {
+    authorizationEndpoint: 'https://github.com/login/oauth/authorize',
+    tokenEndpoint: 'https://github.com/login/oauth/access_token',
+    revocationEndpoint: 'https://github.com/settings/connections/applications/be16b7083f196c91ce08',
+  };
+const [request, response, promptAsync] = useAuthRequest(
+    {
+      clientId: 'be16b7083f196c91ce08',
+      scopes: ['email'],
+      redirectUri: makeRedirectUri({
+        scheme: 'app.json'
+        }),
+    },
+    discovery
+  );
+      if (response?.type === 'success') {
+        const { code } = response.params;
+        console.log(code);
+        }
+  */
+ console.log("github pressed");
 }
    
     return (
@@ -144,9 +177,14 @@ const handleGoogleSignin = ()=> {
      uri:'https://d32a1iuc7x840y.cloudfront.net/0/3176/6a5a0be2-6f43-42d7-84e9-a63140f3251c.png'}}/>
   
 
-<TextInput  secureTextEntry={hidePassword} onChangeText={(val) =>setPassword(val)} style={styles.input} placeholder="Password"></TextInput>
-
-
+<TextInput  secureTextEntry={hidePassword} onChangeText={(val) =>setPassword(val)} style={styles.input} placeholder="Password"
+  ></TextInput>
+  <TouchableHighlight onPress={()=>setHidePassword(!hidePassword)}>
+<View >
+{ hidePassword && <Image style={{marginLeft:40 , marginTop:5}}  source={require('../assets/closed-eye.png' )}/>}
+{ !hidePassword && <Image style={{marginLeft:40 , marginTop:5}}  source={require('../assets/eye.png' )}/>}    
+</View>
+ </TouchableHighlight>
  </View>
  
   
@@ -158,7 +196,7 @@ const handleGoogleSignin = ()=> {
   <Text style={styles.button}>SignUp</Text>
   </Pressable >
  <View style={styles.horiContainer}>
-     <TouchableHighlight onPress={()=>console.log("facebook pressed")}>
+     <TouchableHighlight onPress={handleGithubSignin}>
      <Image style={{margin:20}} source={{
         width:60,
         height:60,

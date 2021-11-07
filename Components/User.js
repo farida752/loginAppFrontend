@@ -1,9 +1,14 @@
 import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
-import { StyleSheet, Text, TouchableHighlight, View, Image,Dimensions } from 'react-native';
 
-function User({item,navigation}) {
+import { StyleSheet, Text, TouchableHighlight, View, Image,Dimensions } from 'react-native';
+import react from 'react';
+
+function User({item,navigation,handeler,state}) {
     const WINDOW_WIDTH = Dimensions.get('window').width;
+   
+   
+
 
     const baseUrl = Platform.OS === 'android' ? 'http://10.0.2.2' : 'http://localhost';
     const handleDelete = ()=> {
@@ -18,8 +23,9 @@ function User({item,navigation}) {
             email:item.email,          
         })
     })
-  //  .then(()=> navigation.navigate("Accounts"));
+    handeler(!state);
     console.log("deleted");
+    console.log(state);
 }
     return (
         

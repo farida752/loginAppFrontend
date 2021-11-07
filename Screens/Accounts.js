@@ -5,13 +5,50 @@ import React from "react";
 import useFetch from '../Components/UseFetch';
 import Spinner from 'react-native-loading-spinner-overlay';
 import User from '../Components/User';
+import{useState,useEffect} from 'react';
+
 
 
 function Accounts({navigation}) {
+    
+    const [accounts, setAccounts] = useState([]);
+    const [error, setError] = useState(null);
+    const [onProcessing, setProcessing] = useState(true);
+    const[state,setState]=useState(false);
 
     const baseUrl = Platform.OS === 'android' ? 'http://10.0.2.2' : 'http://localhost';
-    const{error,onProcessing,data:accounts} = useFetch(baseUrl+ ':3333/show');
-   
+    
+   // const{error,onProcessing,data:accounts} = useFetch(baseUrl+ ':3333/show');
+    
+    useEffect(() => {
+        fetch(baseUrl+ ':3333/show', {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',}
+               
+            })
+          .then(res => {
+            if (!res.ok) { 
+              throw Error('Could not fetch the data for that resource');
+            } 
+            return res.json();
+          })
+          .then(data => {
+            setAccounts(data);
+            setError(null);
+            setProcessing(false);
+          })
+          .catch(err => {     
+            setError(err.message);
+            setProcessing(false);
+          });
+      //}
+      }, [state])
+        
+        
+
+           
     return (
         <SafeAreaView style={styles.container}>
             <ImageBackground source={require('../assets/glitter.jpg')} style={styles.backgroundImage} >
@@ -33,7 +70,7 @@ function Accounts({navigation}) {
             renderItem={({ item }) => {
             return (
             
-              <User item={item} navigation = { navigation }/>
+              <User item={item} navigation = { navigation } handeler={setState} state={state} />
              
             )
             }}
