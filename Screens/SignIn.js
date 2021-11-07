@@ -6,9 +6,10 @@ import { showMessage } from "react-native-flash-message";
 /*
 import * as WebBrowser from 'expo-web-browser';
 import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
-*/
+
 import * as AuthSession from 'expo-auth-session';
 import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
+*/
 
 const SignIn = ({navigation}) => {
     const [email,setEmail] = React.useState('');
@@ -17,6 +18,7 @@ const SignIn = ({navigation}) => {
     const [hidePassword,setHidePassword] = React.useState(true);
 
     const baseUrl = Platform.OS === 'android' ? 'http://10.0.2.2' : 'http://localhost';
+    
    const handleLogin = ()=> {
     fetch(baseUrl + ":3333/signin", {
         method: 'POST',
